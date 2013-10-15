@@ -77,17 +77,6 @@ class Conway_Grid {
     }
 
     /**
-     * @param $grid
-     */
-    public function setGrid($grid) {
-        $this->_grid = array();
-        for($x = 0; $x < $this->_sizeX; $x++)
-            for($y = 0; $y < $this->_sizeY; $y++)
-                $this->setState($x, $y, $grid[$y][$x]);
-        //$this->_grid = $grid;
-    }
-
-    /**
      * get the state of a specific field
      * @param int $x (0-based)
      * @param int $y (0-based)
@@ -97,6 +86,16 @@ class Conway_Grid {
         if(($x < 0) || ($x >= $this->_sizeX)) return 0;
         if(($y < 0) || ($y >= $this->_sizeY)) return 0;
         return $this->_grid[$y][$x]?1:0;
+    }
+
+    /**
+     * @param $grid
+     */
+    public function setGrid($grid) {
+        $this->_grid = array();
+        foreach($grid as $y => $row)
+            foreach($row as $x => $alive)
+                $this->setState((int)$x, (int)$y, $alive);
     }
 
     /**
@@ -167,10 +166,9 @@ class Conway_Grid {
      * @return Conway_Grid
      */
     public static function createByJSON($json) {
-        if(!is_array($json))
-            $json = json_decode($json);
-        $obj = new self($json["sizeX"], $json["sizeY"]);
-        $obj->setGrid($json["grid"]);
+        $json = json_decode($json);
+        $obj = new self($json->sizeX, $json->sizeY);
+        $obj->setGrid($json->grid);
         return $obj;
     }
 

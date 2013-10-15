@@ -1,12 +1,7 @@
 #conwaygrid {
     position:absolute;
-    top:0px;
-    left:200px;
-}
-#debug {
-    width:200px;
-    overflow:auto;
-    overflow-wrap: break-word;
+    left:150px;
+    top:10px;
 }
 .cell {
     position:absolute;
@@ -27,4 +22,14 @@
 
 button {
     width:100px;
+}
+#debug {
+    background:white;
+    border:1px solid red;
+    position:absolute;
+    left:30px;
+    right:30px;
+    top:30px;
+    bottom:30px;
+    display:none;
 }

@@ -1,8 +1,9 @@
-var sizeX = 20;
-var sizeY = 20;
+var sizeX = 40;
+var sizeY = 50;
 var grid = {};
 var autorun = false;
 
+// Get a specific Grid Cell by its Coordinates. If it doesn't exist, create it
 function getCell(x, y) {
     var cellname = 'cell_'+y+'_'+x;
     var cell = $('#'+cellname);
@@ -14,24 +15,38 @@ function getCell(x, y) {
         cell.css("left", y*20);
 
         cell.click(function() {
-            if(!autorun) {
-                $(this).toggleClass('alive');
-                grid[y][x] = 1 - grid[y][x];
-            }
+            $(this).toggleClass('alive');
+            grid[y][x] = 1 - grid[y][x];
         });
     }
     return cell;
 }
 
+// Get JSON Object for API Request
 function getJSONObject() {
     var obj = {
         sizeX: sizeX,
         sizeY: sizeY,
         grid: grid
     };
-    return obj;
+    return JSON.stringify(obj);
 }
 
+// Handle API Result Data
+function handleData(data, withautorun) {
+    if(data.indexOf("<div") >= 0) {
+        $('#debug').html(data);
+        $('#debug').show();
+    } else {
+        data = jQuery.parseJSON(data);
+        displayGrid(data.grid);
+
+        if(autorun && withautorun)
+            setTimeout("step()", 1000);
+    };
+}
+
+// Display Grid Data
 function displayGrid(dGrid) {
     for(x=0; x<sizeX; x++) {
         for(y=0; y<sizeY; y++) {
@@ -45,17 +60,15 @@ function displayGrid(dGrid) {
     grid = dGrid;
 }
 
+// Do a single Step and display it
 function step() {
-    $.post('json.php', {jsondata: getJSONObject(), steps: 1})
+    $.post('json.php', {steps: 1, jsondata: getJSONObject()})
         .done(function(data) {
-            data = jQuery.parseJSON(data);
-            displayGrid(data.grid);
-
-            if(autorun) {
-                setTimeout("step()", 1000);
-            }
+            handleData(data, true);
         });
 }
+
+
 
 $(document).ready(function() {
     var x, y;
@@ -66,26 +79,29 @@ $(document).ready(function() {
     }
     displayGrid(grid);
 
+    // Do a single Step
     $('#btn_step').click(function() {
         step();
     });
 
+    // Clear the Grid
+    // Yes i am aware that i could do that without sending a request to the PHP API, but thats not the point
     $('#btn_clear').click(function() {
         $.post('json.php', {sizeX: sizeX, sizeY: sizeY, clear:true})
             .done(function(data) {
-                data = jQuery.parseJSON(data);
-                displayGrid(data.grid);
+                handleData(data, false);
             });
     });
 
+    // Randomize the Grid
     $('#btn_random').click(function() {
         $.post('json.php', {sizeX: sizeX, sizeY: sizeY, random:true})
             .done(function(data) {
-                data = jQuery.parseJSON(data);
-                displayGrid(data.grid);
+                handleData(data, false);
             });
     });
 
+    // Enable/Disable Autorun
     $('#btn_autorun').click(function() {
         autorun = !autorun;
         if(autorun) {
@@ -96,5 +112,10 @@ $(document).ready(function() {
             $('#btn_autorun').html('Autorun');
             $('#btn_step').show();
         }
+    });
+
+    // Hide Debug Window
+    $('#debug').click(function() {
+        $('#debug').hide();
     });
 });
