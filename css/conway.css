@@ -1,0 +1,26 @@
+#conwaygrid {
+    position:absolute;
+    top:0px;
+    left:200px;
+}
+#debug {
+    width:200px;
+    overflow:auto;
+    overflow-wrap: break-word;
+}
+.cell {
+    position:absolute;
+    height:18px;
+    width:18px;
+    border:1px solid black;
+    border-left:1px solid #888;
+    border-top:1px solid #888;
+    background:white;
+    display:inline-block;
+    margin:0px;
+    padding:0px;
+}
+
+.alive {
+    background:black;
+}

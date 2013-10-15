@@ -1,0 +1,27 @@
+Anforderungen
+=============
+
++ Implementierung eines Algorithmus für Conway's Game of Life (mind.
+  PHP 5.3 kompatibel)
+
++ Raster-Größe konfigurierbar
+
++ Startzustand frei (egal ob fix konfiguriert oder zufällig generiert)
+
++ Code bitte auf GitHub stellen
+
++ Stateless (braucht keine Datenbank oder ähnliche Persistierung)
+
++ bei Fragen melden
+
+
+Scope
+=====
+
++ must have: ein implementierter Algorithmus lt. den obigen
+  Anforderungen
+
++ nice to have: SOA-Schnittstelle (PHP Backend) - egal ob REST, JSONP,
+  XML-RPC, SOAP, etc.
+
++ nice to have: Simples Frontend-Rendering (JS) via SOA-Schnittselle
