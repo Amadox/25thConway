@@ -24,3 +24,7 @@
 .alive {
     background:black;
 }
+
+button {
+    width:100px;
+}

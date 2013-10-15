@@ -1,6 +1,7 @@
 var sizeX = 20;
 var sizeY = 20;
 var grid = {};
+var autorun = false;
 
 function getCell(x, y) {
     var cellname = 'cell_'+y+'_'+x;
@@ -13,8 +14,10 @@ function getCell(x, y) {
         cell.css("left", y*20);
 
         cell.click(function() {
-            $(this).toggleClass('alive');
-            grid[y][x] = 1 - grid[y][x];
+            if(!autorun) {
+                $(this).toggleClass('alive');
+                grid[y][x] = 1 - grid[y][x];
+            }
         });
     }
     return cell;
@@ -42,6 +45,18 @@ function displayGrid(dGrid) {
     grid = dGrid;
 }
 
+function step() {
+    $.post('json.php', {jsondata: getJSONObject(), steps: 1})
+        .done(function(data) {
+            data = jQuery.parseJSON(data);
+            displayGrid(data.grid);
+
+            if(autorun) {
+                setTimeout("step()", 1000);
+            }
+        });
+}
+
 $(document).ready(function() {
     var x, y;
     for(y=0; y<sizeY; y++) {
@@ -52,11 +67,7 @@ $(document).ready(function() {
     displayGrid(grid);
 
     $('#btn_step').click(function() {
-        $.post('json.php', {jsondata: getJSONObject(), steps: 1})
-            .done(function(data) {
-                data = jQuery.parseJSON(data);
-                displayGrid(data.grid);
-            });
+        step();
     });
 
     $('#btn_clear').click(function() {
@@ -73,5 +84,17 @@ $(document).ready(function() {
                 data = jQuery.parseJSON(data);
                 displayGrid(data.grid);
             });
+    });
+
+    $('#btn_autorun').click(function() {
+        autorun = !autorun;
+        if(autorun) {
+            step();
+            $('#btn_autorun').html('Stop');
+            $('#btn_step').hide();
+        } else {
+            $('#btn_autorun').html('Autorun');
+            $('#btn_step').show();
+        }
     });
 });
